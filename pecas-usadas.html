@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Peças Usadas - Ingrid Sol'an</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="kabum-header">
+    <div class="kabum-top">
+      <a href="index.html" class="logo"><img src="imag/logo_ingrid_solan.png" alt="Ingrid Sol'an peças e acessório"></a>
+      <div class="search-wrap">
+        <input type="text" id="busca" placeholder="Buscar peças e acessórios" />
+        <button onclick="alert('Busca temporária: digite algo e te mostrarei depois!')">Buscar</button>
+      </div>
+    </div>
+    <nav class="kabum-nav">
+      <a href="index.html">Início</a>
+      <a href="pecas-novas.html">Peças Novas</a>
+      <a href="pecas-usadas.html">Peças Usadas</a>
+      <a href="servicos.html">Serviços</a>
+      <a href="contato.html">Contato</a>
+    </nav>
+    <p>Loja Ingrid Sol'an peças e acessório.</p>
+    <button id="toggle-pecas" title="Mostrar/Ocultar Carrinho">🛒</button>
+  </header>
+
+  <main>
+    <section id="pecas-usadas"></section>
+    <section id="carrinho">
+      <h2>Carrinho de Compras</h2>
+      <p>Seu carrinho está vazio.</p>
+    </section>
+  </main>
+
+  <a href="https://wa.me/5527996990894" class="whatsapp-btn">
+    <img src="imag/whatsapp.png.png" alt="WhatsApp">
+  </a>
+
+  <footer>
+    <p>Direitos reservados © 2026 Ingrid Sol'an peças e acessório</p>
+  </footer>
+
+  <!-- Modal de Cadastro de Cliente -->
+  <div id="modal-cliente" class="modal-cliente" style="display: none;">
+    <div class="modal-cliente-conteudo">
+      <div class="modal-cliente-header">
+        <h2>📋 Dados do Cliente</h2>
+        <button onclick="fecharModalCliente()" class="btn-fechar-modal">✕</button>
+      </div>
+      
+      <form id="form-cliente" onsubmit="validarEEnviarFormulario(event)">
+        <div class="form-grupo">
+          <label for="nome_completo">Nome Completo *</label>
+          <input 
+            type="text" 
+            id="nome_completo" 
+            name="nome_completo" 
+            placeholder="Ex: João da Silva Santos"
+            required
+            minlength="5"
+          >
+          <span class="help-text">Mínimo 5 caracteres</span>
+        </div>
+
+        <div class="form-grupo">
+          <label for="cpf">CPF *</label>
+          <input 
+            type="text" 
+            id="cpf" 
+            name="cpf" 
+            placeholder="000.000.000-00"
+            required
+            maxlength="14"
+            oninput="formatarCPF(this)"
+          >
+          <span class="help-text" id="cpf-erro"></span>
+        </div>
+
+        <div class="form-grupo">
+          <label for="celular">Celular *</label>
+          <input 
+            type="tel" 
+            id="celular" 
+            name="celular" 
+            placeholder="(11) 98765-4321"
+            required
+            maxlength="15"
+            oninput="formatarCelular(this)"
+          >
+          <span class="help-text">10 ou 11 dígitos</span>
+        </div>
+
+        <div class="form-grupo">
+          <label for="endereco">Endereço Completo *</label>
+          <textarea 
+            id="endereco" 
+            name="endereco" 
+            placeholder="Ex: Rua Principal, 123 - Apt 45, Bairro, Cidade, SP, 02000-000"
+            required
+            minlength="10"
+            rows="3"
+          ></textarea>
+          <span class="help-text">Incluir: rua, número, complemento, bairro, cidade, estado, CEP</span>
+        </div>
+
+        <div class="form-grupo">
+          <label for="email">Email (Opcional)</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            placeholder="seu@email.com"
+          >
+        </div>
+
+        <div class="form-acoes">
+          <button type="submit" class="btn-salvar-cliente" id="btn-salvar-cliente">
+            💾 Salvar e Continuar
+          </button>
+          <button type="button" onclick="fecharModalCliente()" class="btn-cancelar">
+            ✕ Cancelar
+          </button>
+        </div>
+      </form>
+
+      <div id="mensagem-carregamento" class="carregamento" style="display: none;">
+        <div class="spinner"></div>
+        <p>Processando...</p>
+      </div>
+
+      <div id="mensagem-erro" class="mensagem-erro" style="display: none;"></div>
+      <div id="mensagem-sucesso" class="mensagem-sucesso" style="display: none;"></div>
+    </div>
+  </div>
+
+  <!-- Estilos do Modal -->
+  <style>
+    .modal-cliente {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-cliente-conteudo {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      animation: slideIn 0.3s ease;
+    }
+
+    .modal-cliente-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      border-bottom: 2px solid #ff6600;
+      padding-bottom: 15px;
+    }
+
+    .modal-cliente-header h2 {
+      margin: 0;
+      color: #333;
+    }
+
+    .btn-fechar-modal {
+      background: none;
+      border: none;
+      font-size: 1.5em;
+      cursor: pointer;
+      color: #999;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-fechar-modal:hover {
+      color: #dc3545;
+      transform: scale(1.2);
+    }
+
+    .form-grupo {
+      margin-bottom: 20px;
+    }
+
+    .form-grupo label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #333;
+      font-size: 0.95em;
+    }
+
+    .form-grupo input,
+    .form-grupo textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 1em;
+      font-family: inherit;
+      transition: all 0.3s ease;
+    }
+
+    .form-grupo input:focus,
+    .form-grupo textarea:focus {
+      outline: none;
+      border-color: #ff6600;
+      box-shadow: 0 0 8px rgba(255, 102, 0, 0.2);
+    }
+
+    .form-grupo input:invalid:not(:placeholder-shown),
+    .form-grupo textarea:invalid:not(:placeholder-shown) {
+      border-color: #dc3545;
+    }
+
+    .help-text {
+      display: block;
+      font-size: 0.85em;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .form-acoes {
+      display: flex;
+      gap: 10px;
+      margin-top: 25px;
+    }
+
+    .btn-salvar-cliente,
+    .btn-cancelar {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-salvar-cliente {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .btn-salvar-cliente:hover {
+      background-color: #218838;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-salvar-cliente:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-cancelar {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .btn-cancelar:hover {
+      background-color: #5a6268;
+    }
+
+    .carregamento {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #ff6600;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .mensagem-erro {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+
+    .mensagem-sucesso {
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: 480px) {
+      .modal-cliente-conteudo {
+        padding: 20px;
+        border-radius: 8px;
+      }
+
+      .modal-cliente-header h2 {
+        font-size: 1.2em;
+      }
+
+      .form-grupo input,
+      .form-grupo textarea {
+        padding: 10px;
+        font-size: 16px;
+      }
+
+      .btn-salvar-cliente,
+      .btn-cancelar {
+        padding: 12px;
+        font-size: 0.95em;
+      }
+    }
+  </style>
+
+  <!-- Scripts -->
+  <script src="cliente.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
