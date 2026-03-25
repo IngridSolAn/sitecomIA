@@ -16,8 +16,16 @@ mercadopago.configure({
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
+// Middleware de logging para debug
+app.use((req, res, next) => {
+  console.log(`📨 ${req.method} ${req.path}`);
+  next();
+});
 
 // Servir arquivos estáticos (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname)));
@@ -49,13 +57,13 @@ app.post('/api/criar-preferencia', async (req, res) => {
         email: payer?.email || 'cliente@email.com'
       },
       back_urls: {
-        success: process.env.SUCCESS_URL,
-        failure: process.env.FAILURE_URL,
-        pending: process.env.PENDING_URL
+        success: process.env.SUCCESS_URL || 'http://localhost:3000/sucesso.html',
+        failure: process.env.FAILURE_URL || 'http://localhost:3000/erro.html',
+        pending: process.env.PENDING_URL || 'http://localhost:3000/pendente.html'
       },
       auto_return: 'approved',
       external_reference: `pedido-${Date.now()}`,
-      notification_url: process.env.WEBHOOK_URL
+      notification_url: process.env.WEBHOOK_URL || 'http://localhost:3000/webhook'
     };
 
     const response = await mercadopago.preferences.create(preference);
@@ -335,6 +343,25 @@ app.get('/erro.html', (req, res) => {
 
 app.get('/pendente.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'pendente.html'));
+});
+
+// ===== MIDDLEWARE DE ERRO GLOBAL =====
+// Middleware para tratar erros 404 (rota não encontrada)
+app.use((req, res) => {
+  res.status(404).json({
+    error: 'Rota não encontrada',
+    path: req.path,
+    method: req.method
+  });
+});
+
+// Middleware para tratar erros gerais
+app.use((err, req, res, next) => {
+  console.error('❌ Erro não tratado:', err);
+  res.status(err.status || 500).json({
+    error: err.message || 'Erro interno do servidor',
+    status: err.status || 500
+  });
 });
 
 // ===== INICIAR SERVIDOR =====

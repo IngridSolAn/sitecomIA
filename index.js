@@ -75,7 +75,9 @@ async function criarPreferenciaMercadoPago() {
     });
 
     if (!response.ok) {
-      throw new Error('Erro na resposta do servidor');
+      const errorText = await response.text();
+      console.error('Resposta do servidor:', errorText);
+      throw new Error(`Erro ${response.status}: ${errorText}`);
     }
 
     const data = await response.json();
@@ -101,9 +103,12 @@ async function criarPreferenciaMercadoPago() {
       if (responsePedido.ok) {
         const pedidoData = await responsePedido.json();
         console.log('✅ Pedido salvo no banco de dados:', pedidoData);
+      } else {
+        const errorText = await responsePedido.text();
+        console.error('⚠️ Erro ao salvar pedido:', errorText);
       }
     } catch (erro) {
-      console.error('⚠️ Aviso: Pedido não foi salvo no banco:', erro);
+      console.error('⚠️ Aviso: Erro na requisição de salvar pedido:', erro.message);
       // Continua mesmo que falhe salvar no banco
     }
 
