@@ -1,128 +1,126 @@
-# 🛒 Ingrid Sol'an - Loja de Peças e Acessórios
+📌 Visão Geral
 
-Loja online completa para venda de peças de computador novas e usadas, com integração Mercado Pago para pagamentos reais.
+Este projeto consiste em uma aplicação web completa para comercialização de produtos de informática, contemplando desde a navegação no catálogo até o processamento de pagamentos.
 
-## 🚀 Tecnologias
+A solução foi construída com apoio de Inteligência Artificial na fase inicial e posteriormente refinada manualmente para garantir qualidade, segurança e aderência ao negócio.
 
-- **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
-- **Backend**: Node.js + Express
-- **Pagamentos**: Mercado Pago
-- **Banco**: Local (expansível para MongoDB/PostgreSQL)
+🤖 Inteligência Artificial no Projeto
 
-## 📦 Instalação
+A IA foi utilizada como suporte no desenvolvimento inicial, incluindo:
 
-### 1. Instalar dependências
-```bash
+Estruturação da aplicação
+Geração de código base (frontend e backend)
+Sugestões de layout e organização
+Apoio na integração de serviços
+
+Após isso, foram realizadas melhorias, validações e ajustes manuais.
+
+🧱 Arquitetura
+Frontend (HTML, CSS, JS)
+        │
+        ▼
+Backend (Node.js + Express)
+        │
+        ▼
+API de Pagamento (Mercado Pago)
+🚀 Tecnologias
+🔹 Frontend
+HTML5
+CSS3
+JavaScript (Vanilla)
+🔹 Backend
+Node.js
+Express
+🔹 Integrações
+Mercado Pago (pagamentos)
+🔹 Futuro
+MongoDB ou PostgreSQL
+Autenticação de usuários
+Painel administrativo
+📂 Estrutura do Projeto
+.
+├── index.html
+├── index.js
+├── style.css
+├── server.js
+├── package.json
+├── .env.example
+├── /pages
+│   ├── sucesso.html
+│   ├── erro.html
+│   ├── pendente.html
+│   ├── pecas-novas.html
+│   ├── pecas-usadas.html
+│   ├── servicos.html
+│   └── contato.html
+⚙️ Configuração
+1. Clonar o repositório
+git clone https://github.com/seu-usuario/seu-repositorio.git
+cd seu-repositorio
+2. Instalar dependências
 npm install
-```
+3. Configurar variáveis de ambiente
 
-### 2. Configurar ambiente
-O arquivo `.env` já está configurado com suas credenciais. Verifique se está correto:
+Crie um arquivo .env baseado no .env.example:
 
-```env
-MERCADO_PAGO_ACCESS_TOKEN=APP_USR-5761890001975225-032415-...
-MERCADO_PAGO_PUBLIC_KEY=APP_USR-5e6c6ed7-eeab-427e-b1c5-...
-```
+MERCADO_PAGO_ACCESS_TOKEN=SEU_TOKEN_AQUI
+MERCADO_PAGO_PUBLIC_KEY=SUA_CHAVE_PUBLICA_AQUI
+BASE_URL=http://localhost:3000
 
-### 3. Executar o servidor
-```bash
-# Desenvolvimento (com nodemon)
+⚠️ Nunca versione o arquivo .env
+
+▶️ Execução
+Ambiente de desenvolvimento
 npm run dev
-
-# Produção
+Produção
 npm start
-```
 
-O servidor iniciará em `http://localhost:3000`
+A aplicação estará disponível em:
+👉 http://localhost:3000
 
-## 🛍️ Funcionalidades
+💳 Fluxo de Pagamento
+Usuário adiciona produtos ao carrinho
+Finaliza a compra
+Backend cria preferência de pagamento
+Redirecionamento para checkout
+Retorno com status da transação
+Webhook atualiza o estado do pagamento
+🔐 Segurança
 
-### ✅ Implementadas
-- ✅ Catálogo de produtos (novos e usados)
-- ✅ Carrinho de compras dinâmico
-- ✅ Integração Mercado Pago completa
-- ✅ Páginas de status (sucesso/erro/pendente)
-- ✅ Webhook para notificações de pagamento
-- ✅ Design responsivo (Kabum-inspired)
-- ✅ WhatsApp integration
+Boas práticas aplicadas:
 
-### 🔄 Próximas melhorias
-- Banco de dados para pedidos
-- Sistema de usuários
-- Envio de emails automáticos
-- Dashboard administrativo
+Uso de variáveis de ambiente para credenciais
+Separação entre frontend e backend
+Endpoint dedicado para webhook
+Recomendação de validação de eventos externos
+⚠️ Importante
 
-## 💳 Pagamentos
+Caso credenciais tenham sido expostas anteriormente:
 
-### Formas aceitas:
-- 💳 Cartão de crédito/débito
-- 📱 PIX
-- 📄 Boleto bancário
+Revogar imediatamente
+Gerar novas chaves
+Atualizar ambiente
+📈 Roadmap
+ Persistência de dados (DB)
+ Sistema de autenticação
+ Painel administrativo
+ Logs e monitoramento
+ Deploy automatizado (CI/CD)
+🌐 Deploy
 
-### Fluxo de pagamento:
-1. Cliente adiciona produtos ao carrinho
-2. Clica "Finalizar Compra"
-3. Sistema cria preferência no Mercado Pago
-4. Redirecionamento automático para checkout
-5. Cliente paga e volta para página de sucesso
+Recomendações:
 
-## 🔧 Configuração Mercado Pago
+Vercel (frontend)
+Railway ou Render (backend)
+Antes de publicar:
+Configurar variáveis de ambiente
+Ativar HTTPS
+Configurar webhook no provedor de pagamento
+📞 Contato
 
-### Credenciais necessárias:
-1. **Public Key**: Para inicialização do SDK
-2. **Access Token**: Para criar preferências
-3. **Client ID/Secret**: Para webhooks avançados
+Ingrid Sol'an
+📧 contato@ingridsolan.com.br
 
-### URLs de retorno:
-- **Sucesso**: `/sucesso.html`
-- **Erro**: `/erro.html`
-- **Pendente**: `/pendente.html`
-- **Webhook**: `/webhook`
+📄 Licença
 
-## 📁 Estrutura do Projeto
-
-```
-├── index.html              # Página inicial
-├── index.js                # Lógica frontend
-├── style.css               # Estilos CSS
-├── server.js               # Servidor backend
-├── package.json            # Dependências
-├── .env                    # Configurações (credenciais)
-├── sucesso.html            # Página pós-pagamento
-├── erro.html              # Página erro pagamento
-├── pendente.html          # Página pagamento pendente
-├── pecas-novas.html       # Página peças novas
-├── pecas-usadas.html      # Página peças usadas
-├── servicos.html          # Página serviços
-└── contato.html           # Página contato
-```
-
-## 🌐 Deploy em Produção
-
-### 1. Configurar domínio
-Atualize as URLs no `.env`:
-```env
-BASE_URL=https://ingridsolan.com.br
-SUCCESS_URL=https://ingridsolan.com.br/sucesso.html
-WEBHOOK_URL=https://ingridsolan.com.br/webhook
-```
-
-### 2. Configurar webhook no Mercado Pago
-- Acesse seu painel do MP
-- Vá em "Configurações" → "Notificações"
-- Adicione a URL: `https://ingridsolan.com.br/webhook`
-
-### 3. Hospedagem recomendada
-- **Vercel**: Fácil deploy, gratuito
-- **Railway**: Node.js otimizado
-- **Heroku**: Clássico e confiável
-
-## 📞 Suporte
-
-**Ingrid Sol'an**
-- WhatsApp: +55 27 99699-0894
-- Email: contato@ingridsolan.com.br
-
-## 📋 Licença
-
-MIT - Use livremente para seu negócio! 🚀
+Distribuído sob a licença MIT.
