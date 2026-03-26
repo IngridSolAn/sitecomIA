@@ -250,8 +250,8 @@ function gerarCatalogo(pecas, containerId) {
         this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
       });
       
-      botaoComprar.addEventListener('click', function() {
-        adicionarAoCarrinho(peca, preco);
+      botaoComprar.addEventListener('click', function(event) {
+        adicionarAoCarrinho(event, peca, preco);
       });
     }
   });
@@ -279,21 +279,25 @@ function filtrarServicos(categoria) {
   });
 }
 
-function adicionarAoCarrinho(item, preco) {
+function adicionarAoCarrinho(event, item, preco) {
   const novoItem = { id: Date.now(), nome: item.nome, preco };
   carrinho.push(novoItem);
   
-  // Animação visual no botão
-  event.target.style.transform = 'scale(0.95)';
-  event.target.textContent = '✓ Adicionado!';
-  event.target.style.backgroundColor = '#28a745';
-  event.target.style.color = '#fff';
+  // Animação visual no botão (uso seguro de event)
+  if (event && event.target) {
+    event.target.style.transform = 'scale(0.95)';
+    event.target.textContent = '✓ Adicionado!';
+    event.target.style.backgroundColor = '#28a745';
+    event.target.style.color = '#fff';
+  }
   
   setTimeout(() => {
-    event.target.style.transform = 'scale(1)';
-    event.target.textContent = 'Comprar';
-    event.target.style.backgroundColor = '';
-    event.target.style.color = '';
+    if (event && event.target) {
+      event.target.style.transform = 'scale(1)';
+      event.target.textContent = 'Comprar';
+      event.target.style.backgroundColor = '';
+      event.target.style.color = '';
+    }
   }, 1000);
   
   atualizarCarrinho();
