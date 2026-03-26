@@ -29,8 +29,8 @@ app.use((req, res, next) => {
 
 // Middleware para registrar visitantes
 app.use((req, res, next) => {
-  // Não registrar para arquivos estáticos (CSS, JS, imagens)
-  if (req.path.match(/\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$/)) {
+  // Não registrar para arquivos estáticos (CSS, JS, imagens) ou painel de visitantes
+  if (req.path.match(/\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$/) || req.path === '/painel-visitantes') {
     return next();
   }
   
@@ -377,6 +377,11 @@ app.get('/painel-visitantes', (req, res) => {
       return res.status(500).send('Erro ao buscar visitantes');
     }
 
+    const hoje = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const visitantesHoje = visitantes.filter(v => v.timestamp.startsWith(hoje));
+    const totalHoje = visitantesHoje.length;
+    const totalGeral = visitantes.length;
+
     let html = `
     <!DOCTYPE html>
     <html lang="pt-br">
@@ -389,8 +394,10 @@ app.get('/painel-visitantes', (req, res) => {
     <body>
       <div class="container">
         <h1>📊 Painel de Visitantes do Site</h1>
-        <p>Total de visitantes: <strong>${visitantes.length}</strong></p>
+        <p>Total de visitantes hoje: <strong>${totalHoje}</strong></p>
+        <p>Total geral: <strong>${totalGeral}</strong></p>
         
+        <h2>Visitas de Hoje</h2>
         <table border="1" style="width: 100%; border-collapse: collapse;">
           <thead>
             <tr>
@@ -405,7 +412,7 @@ app.get('/painel-visitantes', (req, res) => {
           <tbody>
     `;
 
-    visitantes.forEach(visitante => {
+    visitantesHoje.forEach(visitante => {
       html += `
             <tr>
               <td>${visitante.id}</td>
