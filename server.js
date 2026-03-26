@@ -57,6 +57,11 @@ app.use(express.static(path.join(__dirname)));
 
 // ===== ROTAS DA API =====
 
+// Rotas de preflight CORS para APIs
+app.options('/api/cadastrar-cliente', cors());
+app.options('/api/criar-preferencia', cors());
+app.options('/api/salvar-pedido', cors());
+
 // Rota para criar preferência de pagamento
 app.post('/api/criar-preferencia', async (req, res) => {
   try {
@@ -214,6 +219,13 @@ function validarCelular(celular) {
 // POST - Cadastrar novo cliente
 app.post('/api/cadastrar-cliente', (req, res) => {
   const { nome_completo, celular, endereco, cpf, email } = req.body;
+
+  // debug: conferir se o corpo chegou corretamente
+  console.log('📥 /api/cadastrar-cliente recebendo:', {
+    method: req.method,
+    headers: req.headers['content-type'],
+    body: req.body
+  });
 
   // Validações
   if (!nome_completo || !celular || !endereco || !cpf) {
