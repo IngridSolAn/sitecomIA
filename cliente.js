@@ -164,8 +164,18 @@ async function validarEEnviarFormulario(event) {
       body: JSON.stringify(dados)
     });
     
-    const resultado = await response.json();
-    
+    const rawTexto = await response.text();
+    let resultado;
+    try {
+      resultado = rawTexto ? JSON.parse(rawTexto) : {};
+    } catch (erroJson) {
+      console.error('❌ JSON inválido retornado pelo servidor:', rawTexto);
+      throw new Error(
+        `Erro ao processar resposta do servidor (esperado JSON). ` +
+        `Código: ${response.status}. Texto: ${rawTexto.substring(0, 300)}`
+      );
+    }
+
     if (response.ok) {
       // Salvar cliente no localStorage
       clienteAtual = resultado.cliente;
