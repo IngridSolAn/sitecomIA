@@ -125,4 +125,4 @@ WEBHOOK_URL=https://ingridsolan.com.br/webhook
 
 ## 📋 Licença
 
-MIT - Use livremente para seu negócio! 🚀
+MIT - Use livremente para seu negócio! 
