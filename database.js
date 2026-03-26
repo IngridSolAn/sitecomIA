@@ -4,6 +4,7 @@ const path = require('path');
 // Caminho dos arquivos de dados
 const clientesPath = path.join(__dirname, 'dados', 'clientes.json');
 const pedidosPath = path.join(__dirname, 'dados', 'pedidos.json');
+const visitantesPath = path.join(__dirname, 'dados', 'visitantes.json');
 const dataDir = path.join(__dirname, 'dados');
 
 // Criar diretório de dados se não existir
@@ -22,6 +23,11 @@ function inicializarArquivos() {
   if (!fs.existsSync(pedidosPath)) {
     fs.writeFileSync(pedidosPath, JSON.stringify([], null, 2));
     console.log('✅ Arquivo de pedidos criado');
+  }
+
+  if (!fs.existsSync(visitantesPath)) {
+    fs.writeFileSync(visitantesPath, JSON.stringify([], null, 2));
+    console.log('✅ Arquivo de visitantes criado');
   }
 }
 
@@ -182,6 +188,40 @@ const database = {
       }
     } catch (erro) {
       callback({ error: 'Erro ao atualizar pedido: ' + erro.message }, null);
+    }
+  },
+
+  // Registrar visitante
+  registrarVisitante: (dados, callback) => {
+    try {
+      const visitantes = lerArquivo(visitantesPath);
+      
+      const novoVisitante = {
+        id: visitantes.length + 1,
+        ...dados,
+        timestamp: new Date().toISOString()
+      };
+      
+      visitantes.push(novoVisitante);
+      
+      if (escreverArquivo(visitantesPath, visitantes)) {
+        callback(null, novoVisitante);
+      } else {
+        callback({ error: 'Erro ao salvar visitante' }, null);
+      }
+    } catch (erro) {
+      callback({ error: 'Erro ao registrar visitante: ' + erro.message }, null);
+    }
+  },
+
+  // Buscar todos os visitantes
+  buscarVisitantes: (callback) => {
+    try {
+      const visitantes = lerArquivo(visitantesPath);
+      
+      callback(null, visitantes);
+    } catch (erro) {
+      callback({ error: 'Erro ao buscar visitantes: ' + erro.message }, null);
     }
   },
 

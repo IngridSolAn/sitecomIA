@@ -27,6 +27,31 @@ app.use((req, res, next) => {
   next();
 });
 
+// Middleware para registrar visitantes
+app.use((req, res, next) => {
+  // Não registrar para arquivos estáticos (CSS, JS, imagens)
+  if (req.path.match(/\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$/)) {
+    return next();
+  }
+  
+  const ip = req.ip || req.connection.remoteAddress || req.socket.remoteAddress || 'unknown';
+  const userAgent = req.get('User-Agent') || 'unknown';
+  const path = req.path;
+  
+  db.registrarVisitante({
+    ip: ip,
+    userAgent: userAgent,
+    path: path,
+    method: req.method
+  }, (erro, resultado) => {
+    if (erro) {
+      console.error('Erro ao registrar visitante:', erro);
+    }
+  });
+  
+  next();
+});
+
 // Servir arquivos estáticos (HTML, CSS, JS)
 app.use(express.static(path.join(__dirname)));
 
@@ -343,6 +368,69 @@ app.get('/erro.html', (req, res) => {
 
 app.get('/pendente.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'pendente.html'));
+});
+
+// Rota para painel de visitantes
+app.get('/painel-visitantes', (req, res) => {
+  db.buscarVisitantes((err, visitantes) => {
+    if (err) {
+      return res.status(500).send('Erro ao buscar visitantes');
+    }
+
+    let html = `
+    <!DOCTYPE html>
+    <html lang="pt-br">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Painel de Visitantes</title>
+      <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+      <div class="container">
+        <h1>📊 Painel de Visitantes do Site</h1>
+        <p>Total de visitantes: <strong>${visitantes.length}</strong></p>
+        
+        <table border="1" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>IP</th>
+              <th>User Agent</th>
+              <th>Página</th>
+              <th>Método</th>
+              <th>Data/Hora</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    visitantes.forEach(visitante => {
+      html += `
+            <tr>
+              <td>${visitante.id}</td>
+              <td>${visitante.ip}</td>
+              <td>${visitante.userAgent.substring(0, 50)}...</td>
+              <td>${visitante.path}</td>
+              <td>${visitante.method}</td>
+              <td>${new Date(visitante.timestamp).toLocaleString('pt-BR')}</td>
+            </tr>
+      `;
+    });
+
+    html += `
+          </tbody>
+        </table>
+        
+        <br>
+        <a href="/">← Voltar ao site</a>
+      </div>
+    </body>
+    </html>
+    `;
+
+    res.send(html);
+  });
 });
 
 // ===== MIDDLEWARE DE ERRO GLOBAL =====
